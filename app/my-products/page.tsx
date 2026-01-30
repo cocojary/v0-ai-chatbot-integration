@@ -8,7 +8,6 @@ import { Footer } from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -168,18 +167,107 @@ export default function MyProductsPage() {
             </Card>
           </div>
 
-          {/* Tabs */}
-          <Tabs defaultValue="products" className="space-y-6">
-            <TabsList>
-              <TabsTrigger value="products">商品一覧</TabsTrigger>
-              <TabsTrigger value="analytics">アナリティクス</TabsTrigger>
-            </TabsList>
+          {/* Main Content - Two Column Layout */}
+          <div className="grid gap-8 lg:grid-cols-3">
+            {/* Left: Stats Overview */}
+            <div className="space-y-6 lg:col-span-1">
+              <div>
+                <h2 className="mb-4 text-lg font-semibold">統計</h2>
+                <div className="space-y-3">
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-xs text-muted-foreground uppercase tracking-wider">総出品数</p>
+                          <p className="mt-2 text-3xl font-bold">{totalProducts}</p>
+                        </div>
+                        <Package className="h-10 w-10 text-primary/20" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-xs text-muted-foreground uppercase tracking-wider">出品中</p>
+                          <p className="mt-2 text-3xl font-bold text-green-600">{activeProducts}</p>
+                        </div>
+                        <TrendingUp className="h-10 w-10 text-green-500/20" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-xs text-muted-foreground uppercase tracking-wider">総閲覧数</p>
+                          <p className="mt-2 text-3xl font-bold text-blue-600">{totalViews}</p>
+                        </div>
+                        <Eye className="h-10 w-10 text-blue-500/20" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-xs text-muted-foreground uppercase tracking-wider">お気に入り</p>
+                          <p className="mt-2 text-3xl font-bold text-red-600">{totalFavorites}</p>
+                        </div>
+                        <Users className="h-10 w-10 text-red-500/20" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
 
-            <TabsContent value="products" className="space-y-6">
-              {/* Filters */}
-              <div className="flex flex-col gap-4 sm:flex-row">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              {/* Filters Sidebar */}
+              <div>
+                <h2 className="mb-4 text-lg font-semibold">フィルター</h2>
+                <Card>
+                  <CardContent className="space-y-4 p-4">
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">ステータス</label>
+                      <Select value={statusFilter} onValueChange={setStatusFilter}>
+                        <SelectTrigger className="mt-2">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">すべて</SelectItem>
+                          <SelectItem value="available">出品中</SelectItem>
+                          <SelectItem value="sold">売却済み</SelectItem>
+                          <SelectItem value="draft">下書き</SelectItem>
+                          <SelectItem value="paused">一時停止</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">ソート</label>
+                      <Select value={sortBy} onValueChange={setSortBy}>
+                        <SelectTrigger className="mt-2">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="newest">最新順</SelectItem>
+                          <SelectItem value="oldest">古い順</SelectItem>
+                          <SelectItem value="price-high">価格が高い順</SelectItem>
+                          <SelectItem value="price-low">価格が低い順</SelectItem>
+                          <SelectItem value="views">閲覧数が多い順</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+
+            {/* Right: Product List */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Search & Header */}
+              <div className="space-y-4">
+                <h2 className="text-lg font-semibold">商品一覧</h2>
+                <div className="relative">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder="商品名・型番で検索..."
                     value={searchQuery}
@@ -187,165 +275,110 @@ export default function MyProductsPage() {
                     className="pl-10"
                   />
                 </div>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-full sm:w-[160px]">
-                    <SelectValue placeholder="ステータス" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">すべて</SelectItem>
-                    <SelectItem value="available">出品中</SelectItem>
-                    <SelectItem value="sold">売却済み</SelectItem>
-                    <SelectItem value="draft">下書き</SelectItem>
-                    <SelectItem value="paused">一時停止</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger className="w-full sm:w-[160px]">
-                    <SelectValue placeholder="並び替え" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="newest">新しい順</SelectItem>
-                    <SelectItem value="oldest">古い順</SelectItem>
-                    <SelectItem value="price-high">価格が高い順</SelectItem>
-                    <SelectItem value="price-low">価格が低い順</SelectItem>
-                    <SelectItem value="views">閲覧数順</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
 
-              {/* Products List */}
+              {/* Product List */}
               {filteredProducts.length === 0 ? (
                 <Card>
-                  <CardContent className="flex flex-col items-center justify-center py-16">
-                    <Package className="mb-4 h-12 w-12 text-muted-foreground/50" />
-                    <h3 className="mb-2 text-lg font-medium">商品がありません</h3>
-                    <p className="mb-4 text-sm text-muted-foreground">
-                      条件に一致する商品が見つかりませんでした
-                    </p>
-                    <Link href="/sell">
-                      <Button>
-                        <Plus className="mr-2 h-4 w-4" />
-                        新規出品
-                      </Button>
-                    </Link>
+                  <CardContent className="flex flex-col items-center justify-center py-12">
+                    <Package className="mb-4 h-12 w-12 text-muted-foreground/30" />
+                    <p className="text-muted-foreground">商品がみつかりません</p>
                   </CardContent>
                 </Card>
               ) : (
-                <div className="space-y-4">
-                  {filteredProducts.map((product) => {
-                    const status = statusLabels[product.status] || statusLabels.available;
-                    return (
-                      <Card key={product.id} className="overflow-hidden">
-                        <CardContent className="p-0">
-                          <div className="flex flex-col sm:flex-row">
-                            {/* Image */}
-                            <div className="relative aspect-video w-full sm:aspect-square sm:w-48">
-                              {product.images && product.images.length > 0 ? (
-                                <Image
-                                  src={product.images[0] || "/placeholder.svg"}
-                                  alt={product.name}
-                                  fill
-                                  className="object-cover"
-                                />
-                              ) : (
-                                <div className="flex h-full w-full items-center justify-center bg-secondary">
-                                  <Package className="h-12 w-12 text-muted-foreground/30" />
-                                </div>
-                              )}
+                <div className="space-y-3">
+                  {filteredProducts.map((product) => (
+                    <Card key={product.id} className="overflow-hidden hover:border-primary/50 transition-colors">
+                      <CardContent className="p-0">
+                        <div className="flex gap-4 p-4">
+                          {/* Product Image */}
+                          <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-lg bg-secondary">
+                            {product.images && product.images.length > 0 ? (
+                              <Image
+                                src={product.images[0] || "/placeholder.svg"}
+                                alt={product.name}
+                                fill
+                                className="object-cover"
+                              />
+                            ) : (
+                              <Package className="absolute inset-0 m-auto h-8 w-8 text-muted-foreground/30" />
+                            )}
+                          </div>
+
+                          {/* Product Info */}
+                          <div className="flex-1">
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="min-w-0">
+                                <h3 className="font-semibold text-foreground truncate">{product.name}</h3>
+                                <p className="text-sm text-muted-foreground">{product.model}</p>
+                                <Badge variant={statusLabels[product.status].variant} className="mt-2">
+                                  {statusLabels[product.status].label}
+                                </Badge>
+                              </div>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="sm">
+                                    <MoreVertical className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem>
+                                    <Edit className="mr-2 h-4 w-4" />
+                                    編集
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem>
+                                    <Eye className="mr-2 h-4 w-4" />
+                                    プレビュー
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem>
+                                    {product.status === "available" ? (
+                                      <>
+                                        <EyeOff className="mr-2 h-4 w-4" />
+                                        一時停止
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Eye className="mr-2 h-4 w-4" />
+                                        再開
+                                      </>
+                                    )}
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem className="text-destructive">
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    削除
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
                             </div>
 
-                            {/* Content */}
-                            <div className="flex flex-1 flex-col p-4">
-                              <div className="flex items-start justify-between gap-4">
-                                <div className="flex-1">
-                                  <div className="mb-1 flex items-center gap-2">
-                                    <Badge variant={status.variant}>{status.label}</Badge>
-                                    <Badge variant="outline">{conditionLabels[product.condition]}</Badge>
-                                  </div>
-                                  <Link href={`/products/${product.id}`}>
-                                    <h3 className="mb-1 text-lg font-semibold hover:text-primary">
-                                      {product.name}
-                                    </h3>
-                                  </Link>
-                                  <p className="text-sm text-muted-foreground">
-                                    {product.manufacturer} / {product.model}
-                                  </p>
-                                </div>
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" size="icon">
-                                      <MoreVertical className="h-4 w-4" />
-                                    </Button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent align="end">
-                                    <DropdownMenuItem>
-                                      <Edit className="mr-2 h-4 w-4" />
-                                      編集
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                      <Eye className="mr-2 h-4 w-4" />
-                                      プレビュー
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                      <EyeOff className="mr-2 h-4 w-4" />
-                                      一時停止
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem className="text-destructive">
-                                      <Trash2 className="mr-2 h-4 w-4" />
-                                      削除
-                                    </DropdownMenuItem>
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
+                            {/* Product Stats */}
+                            <div className="mt-3 flex gap-4 text-sm">
+                              <div>
+                                <p className="text-2xl font-bold text-primary">{formatPrice(product.price)}</p>
                               </div>
-
-                              <div className="mt-auto flex flex-col gap-4 pt-4 sm:flex-row sm:items-end sm:justify-between">
-                                <div>
-                                  <p className="text-2xl font-bold text-primary">
-                                    {formatPrice(product.price)}
-                                  </p>
-                                  {product.originalPrice && product.originalPrice > product.price && (
-                                    <p className="text-sm text-muted-foreground line-through">
-                                      {formatPrice(product.originalPrice)}
-                                    </p>
-                                  )}
+                              <div className="flex items-center gap-4 text-muted-foreground">
+                                <div className="flex items-center gap-1">
+                                  <Eye className="h-4 w-4" />
+                                  {product.views}
                                 </div>
-                                <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                                  <div className="flex items-center gap-1">
-                                    <Eye className="h-4 w-4" />
-                                    <span>{product.views}</span>
-                                  </div>
-                                  <div className="flex items-center gap-1">
-                                    <Users className="h-4 w-4" />
-                                    <span>{product.favorites}</span>
-                                  </div>
-                                  <span>出品日: {product.createdAt}</span>
+                                <div className="flex items-center gap-1">
+                                  <Users className="h-4 w-4" />
+                                  {product.favorites}
+                                </div>
+                                <div className="text-xs">
+                                  {new Date(product.createdAt).toLocaleDateString("ja-JP")}
                                 </div>
                               </div>
                             </div>
                           </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
               )}
-            </TabsContent>
-
-            <TabsContent value="analytics" className="space-y-6">
-              <Card>
-                <CardContent className="py-16 text-center">
-                  <BarChart3 className="mx-auto mb-4 h-12 w-12 text-muted-foreground/50" />
-                  <h3 className="mb-2 text-lg font-medium">アナリティクス</h3>
-                  <p className="text-sm text-muted-foreground">
-                    商品の閲覧数やお気に入り数の推移を確認できます
-                  </p>
-                  <p className="mt-4 text-xs text-muted-foreground">
-                    (デモ版では詳細なアナリティクスは表示されません)
-                  </p>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+            </div>
+          </div>
         </div>
       </main>
       <Footer />
